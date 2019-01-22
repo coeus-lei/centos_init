@@ -48,7 +48,7 @@ if ! grep -q net.bridge.bridge-nf-call-iptables /etc/sysctl.conf; then
 fi
 
 if ! which docker >/dev/null 2>&1; then curl -Lk get.docker.com|bash; fi
-if ! which docker-compose >/dev/null 2>&1; then curl -Lk https://raw.githubusercontent.com/kongbinquan/init/master/docker-compose|bash; fi
+if ! which docker-compose >/dev/null 2>&1; then curl -Lk https://raw.githubusercontent.com/coeus-lei/centos_init/master/docker-compose|bash; fi
 
 [ "$(awk -F'[ |.]' '{print $4 }' /etc/centos-release)" == "7" ] && \
 	{ systemctl enable docker && systemctl start docker; } || \
