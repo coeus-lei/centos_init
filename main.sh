@@ -14,8 +14,8 @@ disable_ipv6() {
 
 ssh_iptables() {
     sed -ri 's/^#?(Port)\s{1,}.*/\1 22992/' /etc/ssh/sshd_config
-    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/iptables.sh|bash
-    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/iptables_init_rules > /etc/sysconfig/iptables
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/centos_init/master/iptables.sh|bash
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/centos_init/master/iptables_init_rules > /etc/sysconfig/iptables
     if [ $1 == "publicnet" ]; then
         sed -i '10s/$/\n-A INPUT                                  -p tcp -m tcp -m state --state NEW -m multiport --dports 22,22992 -m comment --comment "SSH_PORT" -j ACCEPT/' /etc/sysconfig/iptables
 #        sed -ri '/(172.(30|25)|47.90|119.28.51.253|119.9.95.122|MOA)/d' /etc/sysconfig/iptables
