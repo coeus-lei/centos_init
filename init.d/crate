@@ -1,0 +1,118 @@
+#!/bin/bash
+#########################################################################
+# File Name: /etc/init.d/crate.sh
+# Author: LookBack
+# Email: admin#dwhd.org
+# Version:
+# Created Time: 2017年08月15日 星期二 10时21分09秒
+#########################################################################
+
+### BEGIN INIT INFO
+# Provides:          crate
+# Required-Start:    $all
+# Required-Stop:     $all
+# Default-Start:
+# Default-Stop:      0 1 6
+# Short-Description: Starts crate
+# chkconfig: - 80 15
+# Description: CrateDB
+### END INIT INFO
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+# Pull in sysconfig settings
+[ -f /etc/sysconfig/crate ] && . /etc/sysconfig/crate
+
+
+JAVA_UPDATE=$(java -version 2>&1 | grep version | cut -d' ' -f 3 | sed 's/\"//g' | cut -d'_' -f2)
+JAVA_VERSION=`java -version 2>&1 | grep "version" | awk '{print $3}' | tr -d \" | awk '{split($0, array, ".")} END{print array[2]}'`
+
+if [ $JAVA_VERSION -ge 8 ] && [ $JAVA_UPDATE -ge 20 ]; then
+    echo "CrateDB uses Java $JAVA_VERSION update $JAVA_UPDATE"
+else
+    # raise error if java version < 1.8.0_20
+    echo "CrateDB requires Java 8 update 20 or later!"
+    exit 1
+fi
+
+CRATE_HOME=/data/CrateDB
+CRATE_USER=crate
+
+DAEMON=${CRATE_HOME}/bin/crate
+NAME=crate
+PID_FILE=${PIDFILE:-/var/run/${NAME}/${NAME}.pid}
+LOCK_FILE=${LOCKFILE:-/var/lock/subsys/${NAME}}
+
+CRATE_PATH_LOG=${CRATE_PATH_LOG:-${CRATE_HOME}/logs}
+CRATE_PATH_CONF=${CRATE_PATH_CONF:-${CRATE_HOME}/config}
+
+DAEMON_OPTS="-d -p ${PID_FILE} \
+    -Cpath.conf=${CRATE_PATH_CONF} \
+    -Cpath.logs=${CRATE_PATH_LOG}"
+
+# These environment variables are passed over.
+CRATE_HEAP_SIZE=${CRATE_HEAP_SIZE:-512m}
+
+CRATE_INCLUDE=${CRATE_INCLUDE:-${CRATE_HOME}/bin/crate.in.sh}
+JAVA_OPTS=-XX:+UseCompressedOops
+
+start() {
+    echo -n $"Starting ${NAME}: "
+    daemon --pidfile=${PID_FILE} --user $CRATE_USER \
+        CRATE_HOME=$CRATE_HOME \
+        CRATE_INCLUDE=$CRATE_INCLUDE \
+        CRATE_HEAP_SIZE=$CRATE_HEAP_SIZE \
+        JAVA_HOME=$JAVA_HOME \
+        JAVA_OPTS=$JAVA_OPTS \
+        $DAEMON $DAEMON_OPTS
+    RETVAL=$?
+    echo
+    [ $RETVAL -eq 0 ] && touch $LOCK_FILE
+    return $RETVAL
+}
+
+stop() {
+    echo -n $"Stopping ${NAME}: "
+    killproc -p ${PID_FILE} -d 10 $DAEMON
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${LOCK_FILE} ${PID_FILE}
+    return $RETVAL
+}
+
+graceful_stop() {
+    echo -n $"Gracefully stopping ${NAME}: "
+    killproc -p ${PID_FILE} $DAEMON -USR2
+    RETVAL=$?
+    echo
+    [ $RETVAL = 0 ] && rm -f ${LOCK_FILE} ${PID_FILE}
+    return $RETVAL
+}
+
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    graceful-stop)
+        graceful_stop
+        ;;
+    status)
+        status -p ${PID_FILE} $DAEMON
+        RETVAL=$?
+        ;;
+    restart|force-reload)
+        stop
+        start
+        ;;
+    *)
+        N=/etc/init.d/${NAME}
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        RETVAL=2
+        ;;
+esac
+
+exit $RETVAL
