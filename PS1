@@ -1,0 +1,10 @@
+unset MAILCHECK
+[ -f ~/.bashrc ] && . ~/.bashrc
+alias vi='vim'
+alias cdnet='cd /etc/sysconfig/network-scripts/'
+
+NodeID=`ip a| awk '$1=="inet" && $2!~"^127"{print $2;exit}'|sed 's/\./_/g;s/\/.*$//'`
+for i in static pretty transient; do hostnamectl set-hostname Node${NodeID}.cluster.com --$i; done
+
+PS1='[\[\033[0;34m\]\u\[\033[0;37m\]@\[\033[0;35m\]Node-${NodeID}\[\033[0;33m\] \w\[\033[0;37m\]]\[\033[0;31m\]\$\[\033[00m\] '
+export PROMPT_COMMAND='{ msg=$(history 1 | { read x y; echo $y; });user=$(whoami); echo $(date "+%F %H:%M:%S"):$user:`pwd`:$msg ---- $(who am i); } >> /tmp/`date "+%F"`.`hostname`.`whoami`.history-timestamp'
