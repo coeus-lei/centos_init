@@ -12,17 +12,18 @@ disable_ipv6() {
     fi
 }
 
-#ssh_iptables() {
-#    sed -ri 's/^#?(Port)\s{1,}.*/\1 22992/' /etc/ssh/sshd_config
-#    curl -Lks4 https://raw.githubusercontent.com/kongbinquan/init/master/friewall2iptables.sh|bash
-#    curl -Lks4 https://raw.githubusercontent.com/kongbinquan/init/master/iptables_init_rules > /etc/sysconfig/iptables
-#    if [ $1 == "publicnet" ]; then
-#        sed -i '10s/$/\n-A INPUT                                  -p tcp -m tcp -m state --state NEW -m multiport --dports 22,22992 -m comment --comment "SSH_PORT" -j ACCEPT/' /etc/sysconfig/iptables
+ssh_iptables() {
+    sed -ri 's/^#?(Port)\s{1,}.*/\1 22992/' /etc/ssh/sshd_config
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/iptables.sh|bash
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/iptables_init_rules > /etc/sysconfig/iptables
+    if [ $1 == "publicnet" ]; then
+        sed -i '10s/$/\n-A INPUT                                  -p tcp -m tcp -m state --state NEW -m multiport --dports 22,22992 -m comment --comment "SSH_PORT" -j ACCEPT/' /etc/sysconfig/iptables
 #        sed -ri '/(172.(30|25)|47.90|119.28.51.253|119.9.95.122|MOA)/d' /etc/sysconfig/iptables
-#    fi    
-#    systemctl restart sshd.service iptables.service
-#    [[ "$(awk '/^UseDNS/{print $2}' /etc/ssh/sshd_config)" =~ ^[nN][oO]$ ]] || { echo 'UseDNS no' >> /etc/ssh/sshd_config && service sshd restart; }
-#}
+    fi    
+    systemctl restart sshd.service iptables.service
+    systemctl enable iptables.service
+    [[ "$(awk '/^UseDNS/{print $2}' /etc/ssh/sshd_config)" =~ ^[nN][oO]$ ]] || { echo 'UseDNS no' >> /etc/ssh/sshd_config && service sshd restart; }
+}
 #加速ssh连接，并更改端口访问安全
 ssh_config(){
     sed -ri 's@(#?)(UseDNS yes)@\2@g' /etc/ssh/sshd_config
@@ -33,7 +34,7 @@ ssh_config(){
 
 #安装zabbix客户端，按照生产环境更改server段ip
 install_zabbix() {
-    curl -Lk4 https://raw.githubusercontent.com/kongbinquan/init/master/zabbix_install_scripts.sh|bash -x -s net 172.25.100.10 
+    curl -Lk4 https://raw.githubusercontent.com/coeus-lei/init/master/zabbix_install_scripts.sh|bash -x -s net 172.25.100.10 
     iptables -I INPUT 4 -s 172.25.100.10/32 -p tcp -m tcp -m state --state NEW -m multiport --dports 10050:10053 -m comment --comment "Zabbix_server" -j ACCEPT
 }
 
@@ -42,7 +43,7 @@ install_zabbix() {
 install_docker() {
     yum install -y epel-release && yum install -y tmux
     #if ! rpm -ql epel-release >/dev/null 2>&1;then yum install -y tmux epel-release; fi
-    curl -Lks4 https://raw.githubusercontent.com/kongbinquan/init/master/docker-install.sh|bash        
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/docker-install|bash        
 }
 
 
@@ -64,12 +65,12 @@ sync_time() {
 add_yum_pulgins() {
     yum install epel-release -y
     if ! which axel 2>/dev/null; then yum install axel -y;fi
-    curl -4Lk https://raw.githubusercontent.com/kongbinquan/init/master/yum_plugins/axelget.conf > /etc/yum/pluginconf.d/axelget.conf
-    curl -4Lk https://github.com/kongbinquan/init/blob/master/yum_plugins/axelget.py >/usr/lib/yum-plugins/axelget.py
+    curl -4Lk https://raw.githubusercontent.com/coeus-lei/init/master/yum_plugins/axelget.conf > /etc/yum/pluginconf.d/axelget.conf
+    curl -4Lk https://raw.githubusercontent.com/coeus-lei/init/master/yum_plugins/axelget.py >/usr/lib/yum-plugins/axelget.py
 }
 
 setPS1() {
-	curl -Lks 'https://raw.githubusercontent.com/kongbinquan/init/master/PS1' >> /etc/profile
+	curl -Lks 'https://raw.githubusercontent.com/coeus-lei/centos_init/master/PS1' >> /etc/profile
 
 	for i in `find /home/ -name '.bashrc'` /etc/skel/.bashrc ~/.bashrc ;do
 		cat >> $i <<-EOF
