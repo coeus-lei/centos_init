@@ -123,6 +123,10 @@ updateYUM() {
 	[ "$release" = "6" ] && yum -y groupinstall "Development tools" "Server Platform Development"
 	[ "$release" = "7" ] && yum -y groups install "Development Tools" "Server Platform Development"
 }
+setSYSCTL() {
+        cp /etc/sysctl.conf{,_$(date "+%Y%m%d_%H%M%S")_backup}
+	curl -Lks https://raw.githubusercontent.com/coeus-lei/centos_init/master/sysctl_optimize_kernel > /etc/sysctl.conf
+}
 
 disable_ipv6
 add_yum_pulgins
@@ -135,4 +139,5 @@ setPS1
 updateYUM
 ssh_iptables
 ss -tnl
+setSYSCTL
 curl -Lks https://raw.githubusercontent.com/coeus-lei/init/master/open-files | bash
