@@ -133,5 +133,6 @@ setSELinux
 install_docker
 setPS1
 updateYUM
+ssh_iptables
 ss -tnl
 curl -Lks https://raw.githubusercontent.com/coeus-lei/init/master/open-files | bash
