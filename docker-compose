@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ComposeUrl=https://github.com/docker/compose/releases
+Version=$(curl -Lks "$ComposeUrl"|grep "/docker/compose/tree" | head -1 |awk -v FS='"' '{print $6}')
+curl -Lk $ComposeUrl/download/$Version/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
