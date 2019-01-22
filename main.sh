@@ -117,7 +117,7 @@ updateYUM() {
 	#sed -i '/[main]/a exclude=kernel*' /etc/yum.conf
 	yum -y install lshw vim tree bash-completion git xorg-x11-xauth xterm \
 		gettext axel tmux vnstat man vixie-cron screen vixie-cron crontabs \
-		wget curl iproute tar gdisk iotop iftop htop
+		wget curl iproute tar gdisk iotop iftop htop net-tools
 #	. /etc/bash_completion
 	[ "$release" = "6" ] && yum -y groupinstall "Development tools" "Server Platform Development"
 	[ "$release" = "7" ] && yum -y groups install "Development Tools" "Server Platform Development"
