@@ -20,7 +20,7 @@ ssh_iptables() {
         sed -i '10s/$/\n-A INPUT                                  -p tcp -m tcp -m state --state NEW -m multiport --dports 22,22992 -m comment --comment "SSH_PORT" -j ACCEPT/' /etc/sysconfig/iptables
 #        sed -ri '/(172.(30|25)|47.90|119.28.51.253|119.9.95.122|MOA)/d' /etc/sysconfig/iptables
     fi    
-    systemctl restart sshd.service iptables.service
+    systemctl restart iptables.service
     systemctl enable iptables.service
     [[ "$(awk '/^UseDNS/{print $2}' /etc/ssh/sshd_config)" =~ ^[nN][oO]$ ]] || { echo 'UseDNS no' >> /etc/ssh/sshd_config && service sshd restart; }
 }
@@ -43,7 +43,7 @@ install_zabbix() {
 install_docker() {
     yum install -y epel-release && yum install -y tmux
     #if ! rpm -ql epel-release >/dev/null 2>&1;then yum install -y tmux epel-release; fi
-    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/init/master/docker-install|bash        
+    curl -Lks4 https://raw.githubusercontent.com/coeus-lei/centos_init/master/docker-install.sh|bash        
 }
 
 
