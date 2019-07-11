@@ -8,7 +8,7 @@
 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
--A INPUT           10.10.20.10                       -p tcp -m tcp -m state --state NEW -m multiport --dports 22,33993    -m comment --comment "ZAABIX_公网_PORT" -j ACCEPT
+-A INPUT           10.10.20.10          -p tcp -m tcp -m state --state NEW -m multiport --dports 22,33993    -m comment --comment "ZAABIX_公网_PORT" -j ACCEPT
 -A INPUT -s        10.10.20.10          -p tcp -m tcp -m state --state NEW -m multiport --dports 10050:10053 -m comment --comment "OFFICE_PORT" -j ACCEPT
 -A INPUT -j REJECT --reject-with icmp-host-prohibited
 -A FORWARD -j REJECT --reject-with icmp-host-prohibited
