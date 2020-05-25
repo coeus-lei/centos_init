@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    privileged: true
+    network_mode: "host"
+    image: coeus0301/nginx:1.10.2
+    ports:
+    - "443:443"
+    - "80:80"
+    environment:
+    - TERM=linux
+    - SED_CHANGE=no
+    volumes:
+    - /etc/localtime:/etc/localtime:ro
+    - /data/wwwroot:/data/wwwroot:rw
+    - /data/wwwlogs:/data/wwwlogs:rw
+    - /usr/local/nginx/conf:/usr/local/nginx/conf:rw
