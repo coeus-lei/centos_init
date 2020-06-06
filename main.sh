@@ -72,45 +72,45 @@ add_yum_pulgins() {
 setPS1() {
 	curl -Lks 'https://raw.githubusercontent.com/coeus-lei/centos_init/master/PS1' >> /etc/profile
 
-	for i in `find /home/ -name '.bashrc'` /etc/skel/.bashrc ~/.bashrc ;do
-		cat >> $i <<-EOF
-			xterm_set_tabs() {
-				TERM=linux
-				export \$TERM
-				setterm -regtabs 4
-				TERM=xterm
-				export \$TERM
-			}
-			linux_set_tabs() {
-				TERM=linux;
-				export \$TERM
-				setterm -regtabs 8
-				LESS="-x4"
-				export LESS
-			}
-			#[ \$(echo \$TERM) == "xterm" ] && xterm_set_tabs
-			linux_set_tabs
-			listipv4() {
-				if [ "\$1" != "lo" ]; then
-					which ifconfig >/dev/null 2>&1 && ifconfig | sed -rn '/^[^ \\t]/{N;s/(^[^ ]*).*addr:([^ ]*).*/\\1=\\2/p}' | \\
-						awk -F= '\$2!~/^192\\.168|^172\\.(1[6-9]|2[0-9]|3[0-1])|^10\\.|^127|^0|^\$/{print}' \\
-						|| ip addr | awk '\$1=="inet" && \$NF!="lo"{print \$NF"="\$2}'
-				else
-					which ifconfig >/dev/null 2>&1 && ifconfig | sed -rn '/^[^ \\t]/{N;s/(^[^ ]*).*addr:([^ ]*).*/\\1=\\2/p}' \\
-					|| ip addr | awk '\$1=="inet" && \$NF!="lo"{print \$NF"="\$2}'
-				fi
-			}
-			tmux_init() {
-				tmux new-session -s "LookBack" -d -n "local"    # 开启一个会话
-				tmux new-window -n "other"          # 开启一个窗口
-				tmux split-window -h                # 开启一个竖屏
-				tmux split-window -v "htop"          # 开启一个横屏,并执行top命令
-				tmux -2 attach-session -d           # tmux -2强制启用256color，连接已开启的tmux
-			}
-			# 判断是否已有开启的tmux会话，没有则开启
-			#if which tmux 2>&1 >/dev/null; then test -z "\$TMUX" && { tmux attach || tmux_init; };fi
-		EOF
-	done
+#	for i in `find /home/ -name '.bashrc'` /etc/skel/.bashrc ~/.bashrc ;do#
+#		cat >> $i <<-EOF
+#			xterm_set_tabs() {
+#				TERM=linux
+#				export \$TERM
+#				setterm -regtabs 4
+#				TERM=xterm
+#				export \$TERM
+#			}
+#			linux_set_tabs() {
+#				TERM=linux;
+#				export \$TERM
+#				setterm -regtabs 8
+#				LESS="-x4"
+#				export LESS
+#			}
+#			#[ \$(echo \$TERM) == "xterm" ] && xterm_set_tabs
+#			linux_set_tabs
+#			listipv4() {
+#				if [ "\$1" != "lo" ]; then
+#					which ifconfig >/dev/null 2>&1 && ifconfig | sed -rn '/^[^ \\t]/{N;s/(^[^ ]*).*addr:([^ ]*).*/\\1=\\2/p}' | \\
+#						awk -F= '\$2!~/^192\\.168|^172\\.(1[6-9]|2[0-9]|3[0-1])|^10\\.|^127|^0|^\$/{print}' \\
+#						|| ip addr | awk '\$1=="inet" && \$NF!="lo"{print \$NF"="\$2}'
+#				else
+#					which ifconfig >/dev/null 2>&1 && ifconfig | sed -rn '/^[^ \\t]/{N;s/(^[^ ]*).*addr:([^ ]*).*/\\1=\\2/p}' \\
+#					|| ip addr | awk '\$1=="inet" && \$NF!="lo"{print \$NF"="\$2}'
+#				fi
+3			}
+#			tmux_init() {
+#				tmux new-session -s "LookBack" -d -n "local"    # 开启一个会话
+#				tmux new-window -n "other"          # 开启一个窗口
+#				tmux split-window -h                # 开启一个竖屏
+#				tmux split-window -v "htop"          # 开启一个横屏,并执行top命令
+#				tmux -2 attach-session -d           # tmux -2强制启用256color，连接已开启的tmux
+#			}
+#			# 判断是否已有开启的tmux会话，没有则开启
+#			#if which tmux 2>&1 >/dev/null; then test -z "\$TMUX" && { tmux attach || tmux_init; };fi
+#		EOF
+#	done
 }
 
 updateYUM() {
