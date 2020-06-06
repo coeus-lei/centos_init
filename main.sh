@@ -99,7 +99,7 @@ setPS1() {
 #					which ifconfig >/dev/null 2>&1 && ifconfig | sed -rn '/^[^ \\t]/{N;s/(^[^ ]*).*addr:([^ ]*).*/\\1=\\2/p}' \\
 #					|| ip addr | awk '\$1=="inet" && \$NF!="lo"{print \$NF"="\$2}'
 #				fi
-3			}
+#			}
 #			tmux_init() {
 #				tmux new-session -s "LookBack" -d -n "local"    # 开启一个会话
 #				tmux new-window -n "other"          # 开启一个窗口
